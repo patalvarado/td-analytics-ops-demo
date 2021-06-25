@@ -58,6 +58,12 @@ def evaluate(data_conf, model_conf, **kwargs):
                       show=False, plot_size=(12, 8), plot_type='bar')
     save_plot('SHAP Feature Importance')
 
+    # alibi explainer
+    xgb_explanation = model.explainer.explain(X_test)
+    xgb_shap_values = xgb_explanation.shap_values[0]
+    shap.summary_plot(xgb_shap_values, X_test, model.feature_names, class_names=["true","false"])
+    save_plot('SHAP Path-Dependent Perturbation Tree')
+
     feature_importance = pd.DataFrame(list(zip(model.feature_names, np.abs(shap_values).mean(0))),
                                       columns=['col_name', 'feature_importance_vals'])
     feature_importance = feature_importance.set_index("col_name").T.to_dict(orient='records')[0]

@@ -45,6 +45,12 @@ def train(data_conf, model_conf, **kwargs):
 
     print("Finished training")
 
+    # add explainer to model
+    from alibi.explainers import TreeShap
+    xgb_explainer = TreeShap(model["xgb"], model_output='raw', task='classification')
+    xgb_explainer.fit()
+    model.explainer = xgb_explainer
+
     # export model artefacts
     joblib.dump(model, "artifacts/output/model.joblib")
 
